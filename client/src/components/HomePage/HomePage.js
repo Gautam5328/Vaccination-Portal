@@ -1,12 +1,12 @@
 import React from 'react'
-import NavbarComponent from '../NavBarComponent/NavbarComponent'
-import VaccineFormDetails from '../VaccineFormDetails/VaccineFormDetails'
+import CovidDisplayData from '../CovidDisplayData'
+
 
 function HomePage() {
   return (
-      <>
-      <VaccineFormDetails/>
-      </>
+      <div>
+        <CovidDisplayData />
+      </div>
     
     
   )

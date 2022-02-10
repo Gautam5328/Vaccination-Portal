@@ -17,6 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useHistory } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import Auth from '../Authentication/Auth';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -84,6 +85,11 @@ function NavbarComponent() {
     history.push('/login');
   }
 
+  const handleMenuLogout=()=>{
+    Auth.signout();
+    history.push('/login');
+  }
+
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -107,7 +113,7 @@ function NavbarComponent() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <br></br>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuLogout}>Logout</MenuItem>
       <br></br>
       <MenuItem onClick={handleMenuLogin}>Login</MenuItem>
     </Menu>
