@@ -14,13 +14,15 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import IconButton from '@material-ui/core/IconButton';
 
 
 const theme = createTheme();
 
 export default function VaccineFormDetails() {
     const [gender, setGender] = React.useState('');
-    const [vaccineStatus,setVaccineStatus]=React.useState('');
+    const [vaccineStatus, setVaccineStatus] = React.useState('');
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -88,7 +90,7 @@ export default function VaccineFormDetails() {
                                         id="demo-simple-select"
                                         value={gender}
                                         label="Gender"
-                                       
+
                                     >
                                         <MenuItem value={'male'} onClick={() => setGender('male')}>Male</MenuItem>
                                         <MenuItem value={'female'} onClick={() => setGender('female')}>Female</MenuItem>
@@ -116,7 +118,7 @@ export default function VaccineFormDetails() {
                                         value={vaccineStatus}
                                         label="Vaccination Status"
                                         autoWidth
-                                       
+
                                     >
                                         <MenuItem value={'oneDose'} onClick={() => setVaccineStatus('oneDose')}>Partially Vaccinated (1 Dose)</MenuItem>
                                         <MenuItem value={'twoDose'} onClick={() => setVaccineStatus('twoDose')}>Fully Vaccinated (2 Doses)</MenuItem>
@@ -137,30 +139,47 @@ export default function VaccineFormDetails() {
                                     autoComplete="new-password"
                                 />
                             </Grid>
-                        
+
+                            <Grid item xs={12} sx={{ display: 'flex' }}>
+
+                                <Typography sx={{ marginRight: '60px' }}>Upload your Certificate</Typography>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    id="contained-button-file"
+
+                                />
+                                <label htmlFor="contained-button-file">
+                                    <Button variant="contained" color="primary" component="span">
+                                        Upload
+                                    </Button>
+                                </label>
+                                <h3>  OR  </h3>
+                                <input accept="image/*" id="icon-button-file"
+                                    type="file" style={{ display: 'none' }} />
+                                <label htmlFor="icon-button-file">
+                                    <IconButton color="primary" aria-label="upload picture"
+                                        component="span">
+                                        <PhotoCamera />
+                                    </IconButton>
+                                </label>
+                            </Grid>
+
                             <Grid item xs={12}>
                                 <FormControlLabel
                                     control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                    label="I want to receive inspiration, marketing promotions and updates via email."
+                                    label="I agree to the Terms of Service and Privacy Policy"
                                 />
                             </Grid>
-
-                        </Grid>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Sign Up
-                        </Button>
-                        <Grid container justifyContent="flex-end">
-                            <Grid item>
-                                Already have an account?
-                                <Link to="/login" variant="body2">
-                                    Sign in
-                                </Link>
+                            <Grid item xs={12} container >
+                                <Button color="primary" size="large" style={{
+                                    marginBottom: '30px', backgroundColor: "#21b6ae", borderRadius: 35,
+                                    padding: "8px 20px",
+                                    fontSize: "13px"
+                                }}>Submit</Button>
                             </Grid>
+
                         </Grid>
                     </Box>
                 </Box>

@@ -93,7 +93,7 @@ function NavbarComponent() {
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 'top',
+        vertical: 'bottom',
         horizontal: 'right',
       }}
       id={menuId}
@@ -106,7 +106,9 @@ function NavbarComponent() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <br></br>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <br></br>
       <MenuItem onClick={handleMenuLogin}>Login</MenuItem>
     </Menu>
   );
