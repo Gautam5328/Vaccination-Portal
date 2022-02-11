@@ -1,7 +1,7 @@
 const express =require("express");
 const bodyParser =require("body-parser");
 const mongoose=require('mongoose');
-const items=require('./routes/api/items');
+const userData=require('./routes/api/userData');
 
 const app=express();
 const PORT=process.env.PORT||5000;
@@ -12,7 +12,7 @@ mongoose.connect(MongoURI)
 .catch((err)=>console.log(err));
 
 app.use(bodyParser.json());
-app.use('/api/items',items);
+app.use('/api/userData',userData);
 
 
 
