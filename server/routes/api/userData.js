@@ -16,6 +16,7 @@ router.post('/',(req,res)=>{
         email : req.body.email,
         password : req.body.password,
     });
+    
 
     newUser.save().then(item=>res.json(item));
 });
