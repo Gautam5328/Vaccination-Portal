@@ -1,20 +1,26 @@
 import { ActionTypes } from "../actions/actionType";
 
-const initialState={
-    userVaccineData : []
+const initialState = {
+    userVaccineData: [],
+    userSignupData: [],
 }
 
-export const userVaccineReducer=(state=initialState,{type,payload})=>{
-    switch(type){
-        
-        case ActionTypes.SET_USER_VACCINE_INFO :
-            return{
+export const userVaccineReducer = (state = initialState, { type, payload }) => {
+    switch (type) {
+
+        case ActionTypes.SET_USER_VACCINE_INFO:
+            return {
                 ...state,
-                userVaccineData : payload
+                userVaccineData: payload
             }
-      
+        case ActionTypes.SET_USER_SIGNUP_INFO:
+            return {
+                ...state,
+                userSignupData: payload
+            }
+
         default:
             return state;
 
-    }   
+    }
 }

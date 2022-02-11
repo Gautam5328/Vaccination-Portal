@@ -1,29 +1,37 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useDispatch } from "react-redux";
+import { userSignupInfo } from "../../redux/actions/actions";
 
 const theme = createTheme();
 
 export default function SignupPage() {
+  const dispatch=useDispatch();
+  const history=useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const userSignUpData={
+      firstName:data.get("firstName"),
+      lastName: data.get("lastName"),
+      email:data.get("email"),
+      password:data.get("password"),
+  }
+
+  console.log(userSignUpData);
+  dispatch(userSignupInfo(userSignUpData));
+ 
   };
 
   return (
@@ -102,6 +110,7 @@ export default function SignupPage() {
                 <Button
                   color="primary"
                   size="large"
+                  type="submit"
                   style={{
                     marginBottom: "30px",
                     backgroundColor: "#21b6ae",
@@ -109,6 +118,7 @@ export default function SignupPage() {
                     padding: "8px 20px",
                     fontSize: "13px",
                   }}
+                  onClick={()=>history.push('/login')}
                 >
                  <span style={{color:'black'}}> SignUp</span>
                 </Button>

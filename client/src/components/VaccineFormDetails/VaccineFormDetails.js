@@ -16,20 +16,32 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
+import {useDispatch} from 'react-redux';
+import { setUserVaccineInfo } from "../../redux/actions/actions";
 
 const theme = createTheme();
 
 export default function VaccineFormDetails() {
   const [gender, setGender] = React.useState("");
+  const dispatch=useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const userVaccineData={
+        name:data.get("beneficiary_name"),
+        password: data.get("password"),
+        aadharNumber:data.get("security_number"),
+        age:data.get("age"),
+        gender:{gender},
+        beneficiary_id:data.get("beneficiary_id"),
+        vaccineStatus:{vaccineStatus},
+        
+    }
+    dispatch(setUserVaccineInfo(userVaccineData));
+
+    console.log(userVaccineData)
   };
 
   return (
@@ -89,7 +101,7 @@ export default function VaccineFormDetails() {
                   <InputLabel id="demo-simple-select-label">Gender</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    id="gender"
                     value={gender}
                     label="Gender"
                   >
@@ -211,6 +223,7 @@ export default function VaccineFormDetails() {
               </Grid>
               <Grid item xs={12} container>
                 <Button
+                  type="submit"
                   color="primary"
                   size="large"
                   style={{
