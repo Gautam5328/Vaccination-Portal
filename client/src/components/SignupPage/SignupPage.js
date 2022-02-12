@@ -14,6 +14,10 @@ import { useDispatch } from "react-redux";
 import { userSignupInfo } from "../../redux/actions/actions";
 import axios from "axios";
 
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const theme = createTheme();
 
 export default function SignupPage() {
@@ -45,6 +49,9 @@ export default function SignupPage() {
       })
       .then((response) => {
         console.log(response);
+        toast.configure();
+        toast.warning("Your Secret Key", { toastId: "success2" },{autoClose:10000});
+        toast.success(response.data._id, { toastId: "success3" },{autoClose:false});
         history.push("/login");
       });
   };

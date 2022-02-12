@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { Link, useHistory } from "react-router-dom";
@@ -12,16 +12,46 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Auth from "../Authentication/Auth";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme();
 
 export default function LoginPage() {
-  const history=useHistory();
+  const history = useHistory();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [secretKey,setSecretKey]=useState("");
+
+  const [apiData, setApiData] = React.useState([]);
   const handleSubmit = () => {
-    Auth.authenticate();
-    history.push('/vaccineform')
-    
+    let flag=false;
+    apiData.map((data) => {
+      if ((data.email == email) && (data.password == password) && (data._id===secretKey)) {
+        toast.configure();
+        toast.success("Login Success", { toastId: "success4" });
+        Auth.authenticate();
+        
+        flag=true;
+        history.push("/vaccineform");
+      }
+    })
+    if(flag===false){
+      toast.configure();
+      toast.warning("Invalid Credentials", { toastId: "success1" });
+      history.push("/login");
+    }
+     
   };
+
+
+  React.useEffect(() => {
+    axios.get("http://localhost:5000/api/userData").then((response) => {
+      setApiData(response.data);
+     
+    });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -38,12 +68,7 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-           
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -52,6 +77,7 @@ export default function LoginPage() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
               autoFocus
             />
             <TextField
@@ -62,7 +88,19 @@ export default function LoginPage() {
               label="Password"
               type="password"
               id="password"
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="secretKey"
+              label="Secret Key"
+              type="text"
+              id="secretKey"
+              onChange={(e) => setSecretKey(e.target.value)}
+              autoComplete="secretKey"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -81,7 +119,7 @@ export default function LoginPage() {
                 }}
                 onClick={handleSubmit}
               >
-                <span style={{color:'black'}}>SignIn</span>
+                <span style={{ color: "black" }}>SignIn</span>
               </Button>
             </Grid>
             <Grid container>
