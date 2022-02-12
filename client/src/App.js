@@ -15,16 +15,13 @@ function App() {
         <NavbarComponent />
         <Switch>
           <PrivateRoute path="/vaccineform" component={VaccineFormDetails} />
+          <PrivateRoute path="/userdashboard" component={UserDashboard}/>
           <Route path="/login">
             <LoginPage />
           </Route>
           <Route path="/home">
             <CovidDisplayData />
-          </Route>
-          <Route path="/userdashboard">
-            <UserDashboard />
-          </Route>
-    
+          </Route>          
           <Route path="/signup">
             <SignupPage />
           </Route>

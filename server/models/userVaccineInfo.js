@@ -22,6 +22,9 @@ const UserVaccineInfoSchema=new Schema({
     },
     secretKey:{
         type:String,
+    },
+    vaccineDate:{
+        type:Date,
     }
  
 });

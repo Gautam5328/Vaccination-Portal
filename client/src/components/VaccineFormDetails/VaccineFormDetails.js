@@ -1,4 +1,4 @@
-import * as React from "react";
+import React,{useState} from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,10 +13,13 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { setUserVaccineInfo } from "../../redux/actions/actions";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -24,25 +27,30 @@ import { toast } from "react-toastify";
 const theme = createTheme();
 
 export default function VaccineFormDetails() {
-  const loggedUser=useSelector((state)=>state.finalreducers.loggedUserData);
+  const loggedUser = useSelector((state) => state.finalreducers.loggedUserData);
   const [gender, setGender] = React.useState("");
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
-  const history=useHistory();
+  const history = useHistory();
+  const [vaccineDate,setVaccineDate]=useState(new Date());
+
+  const handleVaccineDate=(newValue)=>{
+    setVaccineDate(newValue)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    const userVaccineData={
-        name:data.get("beneficiary_name"),
-        password: data.get("password"),
-        aadharNumber:data.get("security_number"),
-        age:data.get("age"),
-        gender:{gender},
-        beneficiary_id:data.get("beneficiary_id"),
-        vaccineStatus:{vaccineStatus},
-        
-    }
+    const userVaccineData = {
+      name: data.get("beneficiary_name"),
+      password: data.get("password"),
+      aadharNumber: data.get("security_number"),
+      age: data.get("age"),
+      gender: { gender },
+      beneficiary_id: data.get("beneficiary_id"),
+      vaccineStatus: { vaccineStatus },
+    };
     dispatch(setUserVaccineInfo(userVaccineData));
     axios
       .post("http://localhost:5000/api/vaccineInfo", {
@@ -53,29 +61,31 @@ export default function VaccineFormDetails() {
         beneficiaryName: data.get("beneficiary_name"),
         aadharNumber: data.get("security_number"),
         age: data.get("age"),
-        gender: {gender}.gender,
+        gender: { gender }.gender,
         beneficiary_id: data.get("beneficiary_id"),
-        vaccineStatus: {vaccineStatus}.vaccineStatus,
+        vaccineStatus: { vaccineStatus }.vaccineStatus,
+        vaccineDate:{vaccineDate}.vaccineDate,
         secretKey: data.get("password"),
       })
       .then((response) => {
         console.log(response);
-         toast.configure();
-         toast.success("Information Saved Success", { toastId: "success9" },{autoClose:false});
-         history.push("/userdashboard");
+        toast.configure();
+        toast.success(
+          "Information Saved Success",
+          { toastId: "success9" },
+          { autoClose: false }
+        );
+        history.push("/userdashboard");
       });
-  
 
-    console.log(userVaccineData)
+    console.log(userVaccineData);
   };
-
-  
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        
+
         <Box
           sx={{
             marginTop: 8,
@@ -84,7 +94,16 @@ export default function VaccineFormDetails() {
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h5" style={{marginBottom:'20px',marginRight:'-890px',marginTop:'-40px',backgroundColor:'yellow'}}>
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{
+              marginBottom: "20px",
+              marginRight: "-890px",
+              marginTop: "-40px",
+              backgroundColor: "yellow",
+            }}
+          >
             Welcome<br></br> {loggedUser.firstName} {loggedUser.lastName}
           </Typography>
           <Typography component="h1" variant="h5">
@@ -201,6 +220,18 @@ export default function VaccineFormDetails() {
                     </MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+
+              <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DesktopDatePicker
+                    label="Vaccine Date"
+                    inputFormat="MM/dd/yyyy"
+                    value={vaccineDate}
+                    onChange={handleVaccineDate}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
               </Grid>
 
               <Grid item xs={12}>

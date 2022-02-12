@@ -19,6 +19,7 @@ router.post("/vaccineInfo", (req, res) => {
     beneficiary_id: req.body.beneficiary_id,
     vaccineStatus: req.body.vaccineStatus,
     secretKey: req.body.secretKey,
+    vaccineDate:req.body.vaccineDate,
   });
 
   newVaccineData.save().then((item) => res.json(item));
