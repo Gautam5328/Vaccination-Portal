@@ -12,26 +12,41 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useDispatch } from "react-redux";
 import { userSignupInfo } from "../../redux/actions/actions";
+import axios from "axios";
 
 const theme = createTheme();
 
 export default function SignupPage() {
-  const dispatch=useDispatch();
-  const history=useHistory();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    const userSignUpData={
-      firstName:data.get("firstName"),
-      lastName: data.get("lastName"),
-      email:data.get("email"),
-      password:data.get("password"),
-  }
 
-  console.log(userSignUpData);
-  dispatch(userSignupInfo(userSignUpData));
- 
+    const userSignUpData = {
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+
+    dispatch(userSignupInfo(userSignUpData));
+    axios
+      .post("http://localhost:5000/api/userData", {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        password: data.get("password"),
+      })
+      .then((response) => {
+        console.log(response);
+        history.push("/login");
+      });
   };
 
   return (
@@ -118,9 +133,8 @@ export default function SignupPage() {
                     padding: "8px 20px",
                     fontSize: "13px",
                   }}
-                  onClick={()=>history.push('/login')}
                 >
-                 <span style={{color:'black'}}> SignUp</span>
+                  <span style={{ color: "black" }}> SignUp</span>
                 </Button>
               </Grid>
             </Grid>

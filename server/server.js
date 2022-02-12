@@ -12,13 +12,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}));
+app.use(cors());
 
 mongoose.connect(MongoURI)
 .then(()=>console.log('MongoDB Connected ...'))
 .catch((err)=>console.log(err));
 
 app.use('/api/userData',userData);
-app.use(cors());
 
 
 app.listen(PORT,()=>{
