@@ -2,6 +2,7 @@ const express =require("express");
 const bodyParser =require("body-parser");
 const mongoose=require('mongoose');
 const userData=require('./routes/api/userData');
+const userVaccineData=require('./routes/api/userVaccineInfo');
 const cors=require('cors');
 
 const app=express();
@@ -19,7 +20,7 @@ mongoose.connect(MongoURI)
 .catch((err)=>console.log(err));
 
 app.use('/api/userData',userData);
-
+app.use('/api',userVaccineData);
 
 app.listen(PORT,()=>{
     console.log(`App listening on PORT ${PORT}`)
