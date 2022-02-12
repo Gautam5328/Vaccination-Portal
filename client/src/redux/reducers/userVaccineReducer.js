@@ -3,6 +3,7 @@ import { ActionTypes } from "../actions/actionType";
 const initialState = {
     userVaccineData: [],
     userSignupData: [],
+    loggedUserData:[],
 }
 
 export const userVaccineReducer = (state = initialState, { type, payload }) => {
@@ -18,6 +19,12 @@ export const userVaccineReducer = (state = initialState, { type, payload }) => {
                 ...state,
                 userSignupData: payload
             }
+
+        case ActionTypes.SET_LOGGED_USER:
+            return{
+                state,
+                loggedUserData:payload
+            }    
 
         default:
             return state;

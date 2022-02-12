@@ -16,12 +16,13 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { setUserVaccineInfo } from "../../redux/actions/actions";
 
 const theme = createTheme();
 
 export default function VaccineFormDetails() {
+  const loggedUser=useSelector((state)=>state.finalreducers.loggedUserData);
   const [gender, setGender] = React.useState("");
   const dispatch=useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
@@ -44,10 +45,13 @@ export default function VaccineFormDetails() {
     console.log(userVaccineData)
   };
 
+  
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        
         <Box
           sx={{
             marginTop: 8,
@@ -56,6 +60,9 @@ export default function VaccineFormDetails() {
             alignItems: "center",
           }}
         >
+          <Typography component="h1" variant="h5" style={{marginBottom:'20px',marginRight:'-890px',marginTop:'-40px',backgroundColor:'yellow'}}>
+            Welcome<br></br> {loggedUser.firstName} {loggedUser.lastName}
+          </Typography>
           <Typography component="h1" variant="h5">
             Enter Vaccine Details
           </Typography>

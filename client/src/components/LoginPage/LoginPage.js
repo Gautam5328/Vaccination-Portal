@@ -15,6 +15,8 @@ import Auth from "../Authentication/Auth";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { loggedUser } from "../../redux/actions/actions";
 
 const theme = createTheme();
 
@@ -23,6 +25,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secretKey,setSecretKey]=useState("");
+  const dispatch=useDispatch();
 
   const [apiData, setApiData] = React.useState([]);
   const handleSubmit = () => {
@@ -32,7 +35,7 @@ export default function LoginPage() {
         toast.configure();
         toast.success("Login Success", { toastId: "success4" });
         Auth.authenticate();
-        
+        dispatch(loggedUser(data));
         flag=true;
         history.push("/vaccineform");
       }

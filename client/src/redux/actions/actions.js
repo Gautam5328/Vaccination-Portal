@@ -13,3 +13,10 @@ export const userSignupInfo=(info)=>{
         payload:info
     }
 }
+
+export const loggedUser=(info)=>{
+    return{
+        type:ActionTypes.SET_LOGGED_USER,
+        payload:info
+    }
+}

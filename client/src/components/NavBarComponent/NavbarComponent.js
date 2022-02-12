@@ -95,6 +95,10 @@ function NavbarComponent() {
     history.push('/signup');
   }
 
+  const handleMenuProfile=()=>{
+      history.push('/userdashboard');
+  }
+
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -159,6 +163,10 @@ function NavbarComponent() {
           </Search>
           <Button variant="outlined" style={{marginLeft:'500px'}} onClick={handleMenuLogin}>Login</Button>
           <Button variant="outlined" style={{marginLeft:'25px'}} onClick={handleMenuSignup}>Signup</Button>
+          {
+            Auth.getAuth()==true && 
+          <Button variant="outlined" style={{marginLeft:'25px'}} onClick={handleMenuProfile}>My Profile</Button>
+          }
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
 

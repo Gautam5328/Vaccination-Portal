@@ -6,6 +6,7 @@ import NavbarComponent from "./components/NavBarComponent/NavbarComponent";
 import PrivateRoute from "./components/Authentication/PrivateRoute";
 import VaccineFormDetails from "./components/VaccineFormDetails/VaccineFormDetails";
 import CovidDisplayData from "./components/CovidDisplayData";
+import UserDashboard from "./components/UserDashboard/UserDashboard";
 
 function App() {
   return (
@@ -17,8 +18,11 @@ function App() {
           <Route path="/login">
             <LoginPage />
           </Route>
-          <Route path="/dashboard">
+          <Route path="/home">
             <CovidDisplayData />
+          </Route>
+          <Route path="/userdashboard">
+            <UserDashboard />
           </Route>
     
           <Route path="/signup">
