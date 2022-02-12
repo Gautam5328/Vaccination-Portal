@@ -17,22 +17,22 @@ function UserDashboard() {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [userVaccineInformation,setUserVaccineInformation]=React.useState([]);
+  const [userVaccineInformation, setUserVaccineInformation] = React.useState(
+    []
+  );
 
   const handleClose = () => {
     setOpen(false);
     setOpenVaccineStatus(false);
   };
 
-  useEffect(()=>{
-    axios.get('http://localhost:5000/api/vaccineInfo').then((res)=>{
-        res.data.map((user)=>{
-            console.log(user);
-                if(user.secretKey===loggedUser._id)
-                setUserVaccineInformation(user);
-        })        
-    })
-  },[openVaccineStatus])
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/vaccineInfo").then((res) => {
+      res.data.map((user) => {
+        if (user.secretKey === loggedUser._id) setUserVaccineInformation(user);
+      });
+    });
+  }, [openVaccineStatus]);
 
   return (
     <div>
@@ -42,10 +42,35 @@ function UserDashboard() {
         direction="column"
         alignItems="center"
         justifyContent="center"
+        style={{ minHeight: "40vh" }}
+      >
+        <Typography style={{ fontSize: "30px" ,backgroundColor:'yellow'}}>
+          Next Date of Vaccination : {userVaccineInformation.nextVaccineDate}
+          <br></br>
+          {
+            userVaccineInformation.vaccineStatus!="twoDose" &&   
+            <b>Days left for Second Dose : 60</b>
+            } 
+        </Typography>
+      </Grid>
+
+      
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
         style={{ minHeight: "30vh" }}
       >
-        <Typography style={{fontSize:'30px'}}>My Information</Typography>
-        <Button onClick={()=>setOpen(true)} variant="outlined" style={{fontSize:'20px',marginTop:'20px'}}>Click Me</Button>
+        <Typography style={{ fontSize: "30px" }}>My Information</Typography>
+        <Button
+          onClick={() => setOpen(true)}
+          variant="outlined"
+          style={{ fontSize: "20px", marginTop: "20px" }}
+        >
+          Click Me
+        </Button>
       </Grid>
 
       <Grid
@@ -54,12 +79,19 @@ function UserDashboard() {
         direction="column"
         alignItems="center"
         justifyContent="center"
-        style={{ minHeight: "80vh" }}
+        style={{ minHeight: "50vh" }}
       >
-        <Typography style={{fontSize:'30px'}}>Vaccine Status</Typography>
-        <Button onClick={()=>setOpenVaccineStatus(true)} variant="outlined" style={{fontSize:'20px',marginTop:'20px'}}>Click Me</Button>
+        <Typography style={{ fontSize: "30px" }}>
+          Vaccination Information
+        </Typography>
+        <Button
+          onClick={() => setOpenVaccineStatus(true)}
+          variant="outlined"
+          style={{ fontSize: "20px", marginTop: "20px" }}
+        >
+          Click Me
+        </Button>
       </Grid>
-
 
       <Dialog
         fullScreen={fullScreen}
@@ -75,7 +107,7 @@ function UserDashboard() {
             marginTop: "10px",
             marginBottom: "20px",
             borderLeft: "solid 6px",
-            backgroundColor:'yellow'
+            backgroundColor: "yellow",
           }}
         >
           . Secret Key :- {loggedUser._id}
@@ -126,15 +158,15 @@ function UserDashboard() {
         </Typography>
       </Dialog>
 
-
-
       <Dialog
         fullScreen={fullScreen}
         open={openVaccineStatus}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">Vaccination Status</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">
+          Vaccination Information
+        </DialogTitle>
         <Typography
           style={{
             marginLeft: "30px",
@@ -142,11 +174,36 @@ function UserDashboard() {
             marginTop: "10px",
             marginBottom: "20px",
             borderLeft: "solid 6px",
-            backgroundColor:'yellow'
+            backgroundColor: "yellow",
           }}
         >
           . Secret Key :- {userVaccineInformation.secretKey}
         </Typography>
+
+        <Typography
+          style={{
+            marginLeft: "30px",
+            marginRight: "30px",
+            marginTop: "10px",
+            marginBottom: "20px",
+            borderLeft: "solid 6px",
+          }}
+        >
+          . Number of Doses Taken :- {userVaccineInformation.vaccineStatus}
+        </Typography>
+
+        <Typography
+          style={{
+            marginLeft: "30px",
+            marginRight: "30px",
+            marginTop: "10px",
+            marginBottom: "20px",
+            borderLeft: "solid 6px",
+          }}
+        >
+          . Next Date of Vaccination :- {userVaccineInformation.nextVaccineDate}
+        </Typography>
+
         <Typography
           style={{
             marginLeft: "30px",
@@ -180,19 +237,7 @@ function UserDashboard() {
         >
           . Age :- {userVaccineInformation.age}
         </Typography>
-        <Typography
-          style={{
-            marginLeft: "30px",
-            marginRight: "30px",
-            marginTop: "10px",
-            marginBottom: "20px",
-            borderLeft: "solid 6px",
-          }}
-        >
-          . Vaccine Status :- {userVaccineInformation.vaccineStatus}
-        </Typography>
       </Dialog>
-
     </div>
   );
 }

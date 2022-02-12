@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,8 +14,8 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserVaccineInfo } from "../../redux/actions/actions";
 import axios from "axios";
 import { toast } from "react-toastify";
+import moment from 'moment';
 
 const theme = createTheme();
 
@@ -32,16 +33,25 @@ export default function VaccineFormDetails() {
   const dispatch = useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
   const history = useHistory();
-  const [vaccineDate,setVaccineDate]=useState(new Date());
+  const [vaccineDate, setVaccineDate] = useState(new Date());
 
-  const handleVaccineDate=(newValue)=>{
-    setVaccineDate(newValue)
-  }
+  const handleVaccineDate = (newValue) => {
+    setVaccineDate(newValue);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    let nextVaccineDate = moment(vaccineDate,'DD-MMM-YYYY').add(2,"months")._d;
+    nextVaccineDate=moment(nextVaccineDate).format('DD-MMM-YYYY');
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
+    console.log(moment(vaccineDate).format('DD-MMM-YYYY'));
+    toast.configure();
+    toast.success(
+      "Next Vaccination Date  "+nextVaccineDate,
+      { toastId: "success10" },
+      { autoClose: false }
+    );
     const userVaccineData = {
       name: data.get("beneficiary_name"),
       password: data.get("password"),
@@ -50,6 +60,7 @@ export default function VaccineFormDetails() {
       gender: { gender },
       beneficiary_id: data.get("beneficiary_id"),
       vaccineStatus: { vaccineStatus },
+      nextVaccineDate:nextVaccineDate,
     };
     dispatch(setUserVaccineInfo(userVaccineData));
     axios
@@ -64,12 +75,12 @@ export default function VaccineFormDetails() {
         gender: { gender }.gender,
         beneficiary_id: data.get("beneficiary_id"),
         vaccineStatus: { vaccineStatus }.vaccineStatus,
-        vaccineDate:{vaccineDate}.vaccineDate,
+        vaccineDate: { vaccineDate }.vaccineDate,
+        nextVaccineDate:nextVaccineDate,
         secretKey: data.get("password"),
       })
       .then((response) => {
         console.log(response);
-        toast.configure();
         toast.success(
           "Information Saved Success",
           { toastId: "success9" },
@@ -228,6 +239,7 @@ export default function VaccineFormDetails() {
                     label="Vaccine Date"
                     inputFormat="MM/dd/yyyy"
                     value={vaccineDate}
+                    format="DD-MM-YYYY"
                     onChange={handleVaccineDate}
                     renderInput={(params) => <TextField {...params} />}
                   />
