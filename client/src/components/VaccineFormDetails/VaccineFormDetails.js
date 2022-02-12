@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -18,6 +18,8 @@ import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { setUserVaccineInfo } from "../../redux/actions/actions";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const theme = createTheme();
 
@@ -26,6 +28,7 @@ export default function VaccineFormDetails() {
   const [gender, setGender] = React.useState("");
   const dispatch=useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
+  const history=useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -41,6 +44,27 @@ export default function VaccineFormDetails() {
         
     }
     dispatch(setUserVaccineInfo(userVaccineData));
+    axios
+      .post("http://localhost:5000/api/vaccineInfo", {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        beneficiaryName: data.get("beneficiary_name"),
+        aadharNumber: data.get("security_number"),
+        age: data.get("age"),
+        gender: {gender}.gender,
+        beneficiary_id: data.get("beneficiary_id"),
+        vaccineStatus: {vaccineStatus}.vaccineStatus,
+        secretKey: data.get("password"),
+      })
+      .then((response) => {
+        console.log(response);
+         toast.configure();
+         toast.success("Information Saved Success", { toastId: "success9" },{autoClose:false});
+         history.push("/userdashboard");
+      });
+  
 
     console.log(userVaccineData)
   };
@@ -115,12 +139,14 @@ export default function VaccineFormDetails() {
                     <MenuItem value={"male"} onClick={() => setGender("male")}>
                       Male
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"female"}
                       onClick={() => setGender("female")}
                     >
                       Female
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"other"}
                       onClick={() => setGender("other")}
@@ -159,12 +185,14 @@ export default function VaccineFormDetails() {
                     >
                       Partially Vaccinated (1 Dose)
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"twoDose"}
                       onClick={() => setVaccineStatus("twoDose")}
                     >
                       Fully Vaccinated (2 Doses)
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"noDose"}
                       onClick={() => setVaccineStatus("noDose")}
@@ -180,7 +208,7 @@ export default function VaccineFormDetails() {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Secret Key"
                   type="password"
                   id="password"
                   autoComplete="new-password"
