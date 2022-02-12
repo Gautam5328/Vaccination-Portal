@@ -1,30 +1,60 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Auth from "../Authentication/Auth";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { loggedUser } from "../../redux/actions/actions";
 
 const theme = createTheme();
 
 export default function LoginPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const history = useHistory();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [secretKey,setSecretKey]=useState("");
+  const dispatch=useDispatch();
+
+  const [apiData, setApiData] = React.useState([]);
+  const handleSubmit = () => {
+    let flag=false;
+    apiData.map((data) => {
+      if ((data.email == email) && (data.password == password) && (data._id===secretKey)) {
+        toast.configure();
+        toast.success("Login Success", { toastId: "success4" });
+        Auth.authenticate();
+        dispatch(loggedUser(data));
+        flag=true;
+        history.push("/vaccineform");
+      }
+    })
+    if(flag===false){
+      toast.configure();
+      toast.warning("Invalid Credentials", { toastId: "success1" });
+      history.push("/login");
+    }
+     
   };
+
+
+  React.useEffect(() => {
+    axios.get("http://localhost:5000/api/userData").then((response) => {
+      setApiData(response.data);
+     
+    });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -41,12 +71,7 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -55,6 +80,7 @@ export default function LoginPage() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
               autoFocus
             />
             <TextField
@@ -65,7 +91,19 @@ export default function LoginPage() {
               label="Password"
               type="password"
               id="password"
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="secretKey"
+              label="Secret Key"
+              type="text"
+              id="secretKey"
+              onChange={(e) => setSecretKey(e.target.value)}
+              autoComplete="secretKey"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -82,8 +120,9 @@ export default function LoginPage() {
                   padding: "8px 20px",
                   fontSize: "13px",
                 }}
+                onClick={handleSubmit}
               >
-                <span style={{color:'black'}}>SignIn</span>
+                <span style={{ color: "black" }}>SignIn</span>
               </Button>
             </Grid>
             <Grid container>

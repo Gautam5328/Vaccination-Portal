@@ -1,11 +1,11 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -13,29 +13,90 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import IconButton from "@material-ui/core/IconButton";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserVaccineInfo } from "../../redux/actions/actions";
+import axios from "axios";
+import { toast } from "react-toastify";
+import moment from 'moment';
 
 const theme = createTheme();
 
 export default function VaccineFormDetails() {
+  const loggedUser = useSelector((state) => state.finalreducers.loggedUserData);
   const [gender, setGender] = React.useState("");
+  const dispatch = useDispatch();
   const [vaccineStatus, setVaccineStatus] = React.useState("");
+  const history = useHistory();
+  const [vaccineDate, setVaccineDate] = useState(new Date());
+
+  const handleVaccineDate = (newValue) => {
+    setVaccineDate(newValue);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    let nextVaccineDate = moment(vaccineDate,'DD-MMM-YYYY').add(2,"months")._d;
+    nextVaccineDate=moment(nextVaccineDate).format('DD-MMM-YYYY');
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
+    console.log(moment(vaccineDate).format('DD-MMM-YYYY'));
+    toast.configure();
+    toast.success(
+      "Next Vaccination Date  "+nextVaccineDate,
+      { toastId: "success10" },
+      { autoClose: false }
+    );
+    const userVaccineData = {
+      name: data.get("beneficiary_name"),
       password: data.get("password"),
-    });
+      aadharNumber: data.get("security_number"),
+      age: data.get("age"),
+      gender: { gender },
+      beneficiary_id: data.get("beneficiary_id"),
+      vaccineStatus: { vaccineStatus },
+      nextVaccineDate:nextVaccineDate,
+    };
+    dispatch(setUserVaccineInfo(userVaccineData));
+    axios
+      .post("http://localhost:5000/api/vaccineInfo", {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        beneficiaryName: data.get("beneficiary_name"),
+        aadharNumber: data.get("security_number"),
+        age: data.get("age"),
+        gender: { gender }.gender,
+        beneficiary_id: data.get("beneficiary_id"),
+        vaccineStatus: { vaccineStatus }.vaccineStatus,
+        vaccineDate: { vaccineDate }.vaccineDate,
+        nextVaccineDate:nextVaccineDate,
+        secretKey: data.get("password"),
+      })
+      .then((response) => {
+        console.log(response);
+        toast.success(
+          "Information Saved Success",
+          { toastId: "success9" },
+          { autoClose: false }
+        );
+        history.push("/userdashboard");
+      });
+
+    console.log(userVaccineData);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+
         <Box
           sx={{
             marginTop: 8,
@@ -44,6 +105,18 @@ export default function VaccineFormDetails() {
             alignItems: "center",
           }}
         >
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{
+              marginBottom: "20px",
+              marginRight: "-890px",
+              marginTop: "-40px",
+              backgroundColor: "yellow",
+            }}
+          >
+            Welcome<br></br> {loggedUser.firstName} {loggedUser.lastName}
+          </Typography>
           <Typography component="h1" variant="h5">
             Enter Vaccine Details
           </Typography>
@@ -89,19 +162,21 @@ export default function VaccineFormDetails() {
                   <InputLabel id="demo-simple-select-label">Gender</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    id="gender"
                     value={gender}
                     label="Gender"
                   >
                     <MenuItem value={"male"} onClick={() => setGender("male")}>
                       Male
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"female"}
                       onClick={() => setGender("female")}
                     >
                       Female
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"other"}
                       onClick={() => setGender("other")}
@@ -140,12 +215,14 @@ export default function VaccineFormDetails() {
                     >
                       Partially Vaccinated (1 Dose)
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"twoDose"}
                       onClick={() => setVaccineStatus("twoDose")}
                     >
                       Fully Vaccinated (2 Doses)
                     </MenuItem>
+                    <br></br>
                     <MenuItem
                       value={"noDose"}
                       onClick={() => setVaccineStatus("noDose")}
@@ -157,11 +234,24 @@ export default function VaccineFormDetails() {
               </Grid>
 
               <Grid item xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DesktopDatePicker
+                    label="Vaccine Date"
+                    inputFormat="MM/dd/yyyy"
+                    value={vaccineDate}
+                    format="DD-MM-YYYY"
+                    onChange={handleVaccineDate}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+
+              <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Secret Key"
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -211,6 +301,7 @@ export default function VaccineFormDetails() {
               </Grid>
               <Grid item xs={12} container>
                 <Button
+                  type="submit"
                   color="primary"
                   size="large"
                   style={{
