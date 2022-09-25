@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserVaccineInfo } from "../../redux/actions/actions";
 import axios from "axios";
 import { toast } from "react-toastify";
-import moment from 'moment';
+import moment from "moment";
 
 const theme = createTheme();
 
@@ -41,17 +41,15 @@ export default function VaccineFormDetails() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let nextVaccineDate = moment(vaccineDate,'DD-MMM-YYYY').add(2,"months")._d;
-    nextVaccineDate=moment(nextVaccineDate).format('DD-MMM-YYYY');
+    let nextVaccineDate = moment(vaccineDate, "DD-MMM-YYYY").add(
+      2,
+      "months"
+    )._d;
+    nextVaccineDate = moment(nextVaccineDate).format("DD-MMM-YYYY");
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log(moment(vaccineDate).format('DD-MMM-YYYY'));
+    console.log(moment(vaccineDate).format("DD-MMM-YYYY"));
     toast.configure();
-    toast.success(
-      "Next Vaccination Date  "+nextVaccineDate,
-      { toastId: "success10" },
-      { autoClose: false }
-    );
     const userVaccineData = {
       name: data.get("beneficiary_name"),
       password: data.get("password"),
@@ -60,37 +58,52 @@ export default function VaccineFormDetails() {
       gender: { gender },
       beneficiary_id: data.get("beneficiary_id"),
       vaccineStatus: { vaccineStatus },
-      nextVaccineDate:nextVaccineDate,
+      nextVaccineDate: nextVaccineDate,
     };
-    dispatch(setUserVaccineInfo(userVaccineData));
-    axios
-      .post("http://localhost:5000/api/vaccineInfo", {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        beneficiaryName: data.get("beneficiary_name"),
-        aadharNumber: data.get("security_number"),
-        age: data.get("age"),
-        gender: { gender }.gender,
-        beneficiary_id: data.get("beneficiary_id"),
-        vaccineStatus: { vaccineStatus }.vaccineStatus,
-        vaccineDate: { vaccineDate }.vaccineDate,
-        nextVaccineDate:nextVaccineDate,
-        secretKey: data.get("password"),
-      })
-      .then((response) => {
-        console.log(response);
-        toast.success(
-          "Information Saved Success",
-          { toastId: "success9" },
-          { autoClose: false }
-        );
-        history.push("/userdashboard");
-      });
+    if (loggedUser._id === data.get("password")) {
+      toast.success(
+        "Next Vaccination Date  " + nextVaccineDate,
+        { toastId: "success10" },
+        { autoClose: false }
+      );
 
-    console.log(userVaccineData);
+      dispatch(setUserVaccineInfo(userVaccineData));
+      axios
+        .post("http://localhost:5000/api/vaccineInfo", {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          beneficiaryName: data.get("beneficiary_name"),
+          aadharNumber: data.get("security_number"),
+          age: data.get("age"),
+          gender: { gender }.gender,
+          beneficiary_id: data.get("beneficiary_id"),
+          vaccineStatus: { vaccineStatus }.vaccineStatus,
+          vaccineDate: { vaccineDate }.vaccineDate,
+          nextVaccineDate: nextVaccineDate,
+          secretKey: data.get("password"),
+        })
+        .then((response) => {
+          console.log(response);
+          toast.success(
+            "Information Saved Success",
+            { toastId: "success9" },
+            { autoClose: false }
+          );
+          history.push("/userdashboard");
+        });
+
+      console.log(userVaccineData);
+    } else {
+      toast.warning(
+        "Invalid Credentials",
+        { toastId: "success90" },
+        { autoClose: false }
+      );
+    }
   };
+
 
   return (
     <ThemeProvider theme={theme}>

@@ -25,10 +25,10 @@ router.post("/vaccineInfo", (req, res) => {
   newVaccineData.save().then((item) => res.json(item));
 });
 
-// router.delete('/:id',(req,res)=>{
-//     console.log(req.params.id);
-//     Items.findById(req.params.id)
-//     .then(item=>item.remove().then(()=>res.json({sucess:true}))).catch(err=>console.log(err));
-// });
+router.delete('/:id',(req,res)=>{
+    console.log(req.params.id);
+    Items.findById(req.params.id)
+    .then(item=>item.remove().then(()=>res.json({sucess:true}))).catch(err=>console.log(err));
+});
 
 module.exports = router;
